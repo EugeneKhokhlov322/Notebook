@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренувальне онлайн-тестування</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #0056b3;
+            text-align: center;
+        }
+        .subject-list {
+            margin: 30px 0;
+        }
+        .subject-item {
+            margin-bottom: 10px;
+        }
+        .subject-title {
+            font-weight: bold;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .subsections {
+            display: none;
+            margin-left: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #0056b3;
+        }
+        .subsection-item {
+            padding: 5px 0;
+            cursor: pointer;
+        }
+        .subsection-item:hover {
+            color: #0056b3;
+        }
+        #continue-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #continue-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        .selected {
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .language-header {
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+            background-color: #e9ecef;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .language-subject {
+            margin-left: 20px;
+        }
+        .competency-header {
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+            background-color: #e9ecef;
+            padding: 8px;
+            border-radius: 4px;
+            border-top: 2px solid #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>ТРЕНУВАЛЬНЕ ОНЛАЙНОВЕ ТЕСТУВАННЯ</h1>
+    <h2>підготовка до ЗНО / НМТ / ЄВІ</h2>
+
+    <div class="subject-list" id="subjectList">
+        <!-- Список предметів буде додано через JavaScript -->
+    </div>
+
+    <button id="continue-btn" disabled>Продовжити</button>
+
+    <footer>
+        <p>Ідея: Миляник Андрій Іванович</p>
+        <p>Розробка та підтримка: IT відділ ЛРЦОЯО © (2008-2025)</p>
+    </footer>
+
+    <script>
+        // Дані про основні предмети
+        const mainSubjects = [
+            {
+                name: "Біологія",
+                subsections: [
+                    "Біологія, як наука. Методи досліджень в біології",
+                    "Молекулярний рівень організації життя",
+                    "Клітинний рівень організації життя",
+                    "Організмовий рівень організації життя. Віруси. Прокаріоти",
+                    "Організмовий рівень організації життя. Рослини. Гриби. Лишайники",
+                    "Організмовий рівень організації життя. Тварини",
+                    "Організмовий рівень організації життя. Людина",
+                    "Організмовий рівень організації життя. Розмноження. Розвиток. Спадковість. Мінливість",
+                    "Надорганізмові рівні організації життя. Історичний розвиток",
+                    "Підсумкове тестування"
+                ]
+            },
+            {
+                name: "Географія",
+                subsections: [
+                    "Загальна географія",
+                    "Географія материків і океанів",
+                    "Географія України",
+                    "Економічна і соціальна географія світу",
+                    "Підсумкове тестування"
+                ]
+            },
+            {
+                name: "Історія України",
+                subsections: [
+                    "Від найдавніших часів – перша половина XVI ст.",
+                    "Друга половина XVI ст. – перша половина XVIІІ ст.",
+                    "Друга половина XVIІІ ст. – 1914р.",
+                    "1914 – 1939рр",
+                    "1939р. – початок ХХІст.",
+                    "Підсумкове тестування"
+                ]
+            },
+            {
+                name: "Математика",
+                subsections: [
+                    "Числа і вирази",
+                    "Рівняння і нерівності",
+                    "Функції",
+                    "Комбінаторика, теорія ймовірностей та статистика",
+                    "Планіметрія",
+                    "Стереометрія",
+                    "Підсумкове тестування"
+                ]
+            },
+            {
+                name: "Українська література",
+                subsections: [
+                    "Усна народна творчість",
+                    "Давня українська література",
+                    "Література кін.XVIII – поч.XX ст.",
+                    "Література XX ст.",
+                    "Твори українських письменників емігрантів: І.Багряний, Є.Маланюк",
+                    "Сучасний літературний процес",
+                    "Кластери: аналіз худжнього твору",
+                    "Завдання на встановлення відповідностей",
+                    "Підсумкове тестування"
+                ]
+            },
+            {
+                name: "Українська мова",
+                subsections: [
+                    "Мікротексти",
+                    "Орфографія",
+                    "Фонетика. Орфоепія. Будова слова. Словотвір",
+                    "Лексикологія. Фразеологія",
+                    "Морфологія",
+                    "Синтаксис. Пунктуація",
+                    "Мовностилістичні помилки у словосполученнях та реченнях",
+                    "Підсумкове тестування"
+                ]
+            },
+            {
+                name: "Фізика",
+                subsections: [
+                    "Механіка",
+                    "Молекулярна фізика і термодинаміка",
+                    "Електродинаміка",
+                    "Коливання та хвилі. Оптика",
+                    "Квантова фізика. Елементи теорії відносності",
+                    "Підсумкове тестування"
+                ]
+            },
+            {
+                name: "Хімія",
+                subsections: [
+                    "Загальна хімія",
+                    "Неорганічна хімія",
+                    "Органічна хімія",
+                    "Підсумкове тестування"
+                ]
+            },
+            {
+                name: "Всесвітня історія",
+                subsections: [
+                    "Від найдавніших часів до поч.ХХст.",
+                    "Поч.ХХст. - до 1939рр.",
+                    "1939р. - до наших днів",
+                    "Підсумкове тестування"
+                ]
+            }
+        ];
+
+        // Дані про іноземні мови
+        const foreignLanguages = [
+            {
+                name: "Англійська мова",
+                subsections: [
+                    "Аудіювання",
+                    "Підсумкове тестування за матеріалами ЗНО - 2009-2011",
+                    "Підсумкове тестування за матеріалами ЗНО - 2012-2021, НМТ - 2023"
+                ]
+            },
+            {
+                name: "Іспанська мова",
+                subsections: [
+                    "Аудіювання",
+                    "Підсумкове тестування за матеріалами ЗНО - 2009-2011",
+                    "Підсумкове тестування за матеріалами ЗНО - 2012-2021, НМТ - 2023"
+                ]
+            },
+            {
+                name: "Німецька мова",
+                subsections: [
+                    "Аудіювання",
+                    "Підсумкове тестування за матеріалами ЗНО - 2009-2011",
+                    "Підсумкове тестування за матеріалами ЗНО - 2012-2021, НМТ - 2023"
+                ]
+            },
+            {
+                name: "Французька мова",
+                subsections: [
+                    "Аудіювання",
+                    "Підсумкове тестування. Структура ЗНО - 2009-2011",
+                    "Підсумкове тестування. Структура ЗНО - 2012-2021",
+                    "Підсумкове тестування. Структура НМТ - 2023"
+                ]
+            }
+        ];
+
+        // Дані про тест компетентності
+        const competencyTest = {
+            name: "Тест загальної навчальної компетентності (ЄВІ)",
+            subsections: [
+                "Вербально-комунікативний компонент",
+                "Логіко-аналітичний компонент",
+                "Підсумкове тестування"
+            ]
+        };
+
+        // Створення списку предметів
+        const subjectList = document.getElementById('subjectList');
+        const continueBtn = document.getElementById('continue-btn');
+        let selectedSubject = null;
+        let selectedSubsection = null;
+
+        // Функція для створення елементу предмету
+        function createSubjectItem(subject, isSpecial = false) {
+            const subjectItem = document.createElement('div');
+            subjectItem.className = isSpecial ? 'language-subject' : 'subject-item';
+            
+            const subjectTitle = document.createElement('div');
+            subjectTitle.className = 'subject-title';
+            subjectTitle.textContent = subject.name;
+            
+            const subsectionsContainer = document.createElement('div');
+            subsectionsContainer.className = 'subsections';
+            
+            if (subject.subsections.length > 0) {
+                subject.subsections.forEach(subsection => {
+                    const subsectionItem = document.createElement('div');
+                    subsectionItem.className = 'subsection-item';
+                    subsectionItem.textContent = subsection;
+                    
+                    subsectionItem.addEventListener('click', () => {
+                        // Видаляємо виділення з попереднього підрозділу
+                        document.querySelectorAll('.subsection-item').forEach(item => {
+                            item.classList.remove('selected');
+                        });
+                        
+                        subsectionItem.classList.add('selected');
+                        selectedSubsection = subsection;
+                        checkContinueButton();
+                    });
+                    
+                    subsectionsContainer.appendChild(subsectionItem);
+                });
+                
+                subjectTitle.addEventListener('click', () => {
+                    // Перемикаємо відображення підрозділів
+                    subsectionsContainer.style.display = 
+                        subsectionsContainer.style.display === 'block' ? 'none' : 'block';
+                    
+                    // Додаємо/видаляємо виділення
+                    if (subsectionsContainer.style.display === 'block') {
+                        subjectTitle.classList.add('selected');
+                        selectedSubject = subject.name;
+                    } else {
+                        subjectTitle.classList.remove('selected');
+                        selectedSubject = null;
+                    }
+                    
+                    checkContinueButton();
+                });
+            } else {
+                subjectTitle.addEventListener('click', () => {
+                    // Знімаємо виділення з інших предметів
+                    document.querySelectorAll('.subject-title').forEach(item => {
+                        if (item !== subjectTitle) {
+                            item.classList.remove('selected');
+                        }
+                    });
+                    
+                    subjectTitle.classList.add('selected');
+                    selectedSubject = subject.name;
+                    selectedSubsection = null;
+                    checkContinueButton();
+                });
+            }
+            
+            subjectItem.appendChild(subjectTitle);
+            subjectItem.appendChild(subsectionsContainer);
+            return subjectItem;
+        }
+
+        // Додаємо основні предмети
+        mainSubjects.forEach(subject => {
+            subjectList.appendChild(createSubjectItem(subject));
+        });
+
+        // Додаємо заголовок для іноземних мов
+        const languageHeader = document.createElement('div');
+        languageHeader.className = 'language-header';
+        languageHeader.textContent = "Іноземні мови:";
+        subjectList.appendChild(languageHeader);
+
+        // Додаємо іноземні мови
+        foreignLanguages.forEach(language => {
+            subjectList.appendChild(createSubjectItem(language, true));
+        });
+
+        // Додаємо заголовок для тесту компетентності
+        const competencyHeader = document.createElement('div');
+        competencyHeader.className = 'competency-header';
+        competencyHeader.textContent = "Тести компетентності:";
+        subjectList.appendChild(competencyHeader);
+
+        // Додаємо тест компетентності
+        subjectList.appendChild(createSubjectItem(competencyTest, true));
+
+        // Функція для перевірки стану кнопки "Продовжити"
+        function checkContinueButton() {
+            if (selectedSubject) {
+                // Перевіряємо основні предмети
+                const mainSubject = mainSubjects.find(s => s.name === selectedSubject);
+                if (mainSubject && (mainSubject.subsections.length === 0 || selectedSubsection)) {
+                    continueBtn.disabled = false;
+                    return;
+                }
+                
+                // Перевіряємо іноземні мови
+                const language = foreignLanguages.find(l => l.name === selectedSubject);
+                if (language && (language.subsections.length === 0 || selectedSubsection)) {
+                    continueBtn.disabled = false;
+                    return;
+                }
+                
+                // Перевіряємо тест компетентності
+                if (selectedSubject === competencyTest.name && 
+                    (competencyTest.subsections.length === 0 || selectedSubsection)) {
+                    continueBtn.disabled = false;
+                    return;
+                }
+            }
+            continueBtn.disabled = true;
+        }
+
+        // Обробник кнопки "Продовжити"
+        continueBtn.addEventListener('click', () => {
+            alert(`Ви обрали: ${selectedSubject}${selectedSubsection ? ' → ' + selectedSubsection : ''}\n\nЦе демонстраційний макет. На реальному сайті тут буде перехід до тестування.`);
+        });
+    </script>
+</body>
+</html>
